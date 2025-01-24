@@ -1,8 +1,10 @@
-# playersftbl
+# Players FTBL
 
-This library allows you to fetch football player information from Transfermarkt.
+A library to scrape football players' information from Transfermarkt.
 
 ## Installation
 
+You can install it via pip:
+
 ```bash
-pip install playersftbl==0.0.1
+pip install players-ftbl12==0.0.2
