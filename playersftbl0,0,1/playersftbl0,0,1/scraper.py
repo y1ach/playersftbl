@@ -1,35 +1,25 @@
 import requests
 from bs4 import BeautifulSoup
+import time
 
 def scrape_team(url):
-    """
-    Bu fonksiyon, verilen URL'deki takım bilgilerini çekip döndürür.
-
-    Args:
-    - url (str): Transfermarkt üzerindeki takım sayfasının URL'si
-
-    Returns:
-    - dict: Başlıklar ve verilerle birlikte takım bilgisi
-    - str: Hata mesajı
-    """
     try:
-        # Sayfaya istek gönder
-        response = requests.get(url)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+
+        response = requests.get(url, headers=headers)
         
-        # Başarılı cevap alındığında işleme başla
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
-            # İlgili tabloyu bul
             table_div = soup.find('div', {'id': 'yw1'})
 
             if table_div:
                 rows = table_div.find_all('tr')
 
-                # Başlıkları al
                 headers = rows[0].find_all('th')
                 headers_text = [header.get_text(strip=True) for header in headers]
 
-                # Veri satırlarını al
                 data = []
                 for row in rows[1:]:
                     cols = row.find_all('td')
@@ -41,9 +31,8 @@ def scrape_team(url):
                 return "Tablo bulunamadı!"
         else:
             return f"Sayfaya erişim başarısız: {response.status_code}"
-    except Exception as e:
-        # Hata durumunda genel mesaj
-        return f"Bir hata oluştu: {str(e)}"
 
-# Test URL
-# print(scrape_team("https://www.transfermarkt.com.tr/besiktas-istanbul/startseite/verein/114"))
+    except requests.exceptions.RequestException as e:
+        return f"HTTP hatası: {str(e)}"
+    except Exception as e:
+        return f"Bir hata oluştu: {str(e)}"
